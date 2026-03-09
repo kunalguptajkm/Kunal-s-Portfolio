@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { Camera, Video, MonitorPlay, X, Menu, ChevronDown, Instagram, Linkedin, Youtube, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Camera, Video, MonitorPlay, X, Menu, ChevronDown, Instagram, Linkedin, Youtube, Star, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { PORTFOLIO_PROJECTS, EXPERIENCE, SERVICES } from './data/content';
 
@@ -35,7 +35,7 @@ const BehanceIcon = ({ className }: { className?: string }) => (
 
 const projects = PORTFOLIO_PROJECTS;
 
-const Navbar = () => {
+const Navbar = ({ setShowLogin }: { setShowLogin: (show: boolean) => void }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -63,12 +63,20 @@ const Navbar = () => {
         </a>
         
         {/* Desktop Nav */}
-        <div className="hidden md:flex space-x-8">
+        <div className="hidden md:flex space-x-8 items-center">
           {navLinks.map(link => (
             <a key={link.name} href={link.href} className="text-sm uppercase tracking-widest text-neutral-300 hover:text-white transition-colors">
               {link.name}
             </a>
           ))}
+          {/* The Secret Login Trigger */}
+          <div className="w-px h-4 bg-white/20 ml-2"></div>
+          <button 
+            onClick={() => setShowLogin(true)} 
+            className="flex items-center gap-2 text-xs uppercase tracking-widest text-neutral-500 hover:text-red-500 transition-colors cursor-pointer"
+          >
+            <Lock className="w-3 h-3" /> Login
+          </button>
         </div>
 
         {/* Mobile Toggle */}
@@ -116,8 +124,7 @@ const Hero = () => {
           poster="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80"
           className="w-full h-full object-cover opacity-60"
         >
-          {/* 
-            Note: The attached video cannot be directly hosted by the AI. 
+          {/* Note: The attached video cannot be directly hosted by the AI. 
             Please place your video file in the 'public' folder and name it 'hero-video.mp4'.
           */}
           <source src="/hero-video.mp4" type="video/mp4" />
@@ -1236,8 +1243,104 @@ const ProjectModal = ({ project, onClose }: { project: any, onClose: () => void 
   );
 };
 
+const LoginModal = ({ onClose }: { onClose: () => void }) => {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+
+  const handleFakeLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    
+    // Fake a 2-second server connection, then throw a secure error
+    setTimeout(() => {
+      setStatus('error');
+    }, 2000);
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+      animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
+      exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80"
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.9, y: 20, opacity: 0 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="w-full max-w-md bg-[#0a0a0a] border border-neutral-800 p-8 md:p-10 rounded-2xl relative overflow-hidden shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Animated Top Red Glow */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-70"></div>
+        
+        <button onClick={onClose} className="absolute top-4 right-4 text-neutral-500 hover:text-white transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="mb-10 text-center mt-4">
+          <div className="w-12 h-12 rounded-full border border-neutral-800 bg-neutral-900/50 flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-5 h-5 text-neutral-400" />
+          </div>
+          <h2 className="text-2xl font-light text-white tracking-wide mb-1">System Access</h2>
+          <p className="text-xs text-neutral-500 tracking-widest uppercase">Authorized Personnel Only</p>
+        </div>
+
+        <form onSubmit={handleFakeLogin} className="space-y-6">
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest text-neutral-500 mb-2 pl-1">Admin ID</label>
+            <input 
+              type="text" 
+              required
+              placeholder="Enter clearance code" 
+              className="w-full bg-[#111] border border-neutral-800 focus:border-red-500 text-white px-4 py-3 rounded-lg outline-none transition-colors text-sm placeholder:text-neutral-700" 
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest text-neutral-500 mb-2 pl-1">Passkey</label>
+            <input 
+              type="password" 
+              required
+              placeholder="••••••••" 
+              className="w-full bg-[#111] border border-neutral-800 focus:border-red-500 text-white px-4 py-3 rounded-lg outline-none transition-colors text-sm placeholder:text-neutral-700" 
+            />
+          </div>
+
+          <button 
+            type="submit"
+            disabled={status === 'loading'}
+            className="w-full bg-white text-black hover:bg-neutral-200 transition-colors py-3 rounded-lg text-sm tracking-widest uppercase font-medium mt-4 flex justify-center items-center disabled:opacity-70 disabled:bg-neutral-800 disabled:text-white"
+          >
+            {status === 'loading' ? (
+              <span className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                Authenticating...
+              </span>
+            ) : 'Authenticate'}
+          </button>
+
+          {/* Fake Error Message */}
+          <AnimatePresence>
+            {status === 'error' && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }} 
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-center"
+              >
+                <p className="text-red-500 text-xs tracking-widest uppercase font-medium">Access Denied: Invalid Credentials</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </form>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 export default function App() {
   const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [showLogin, setShowLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [titleIndex, setTitleIndex] = useState(0);
   const titles = ["ARCHITECTURAL VISUALIZER", "3D ARTIST"];
@@ -1337,7 +1440,7 @@ export default function App() {
       </AnimatePresence>
 
       <div className="min-h-screen bg-neutral-950 text-white font-sans selection:bg-white selection:text-black">
-        <Navbar />
+        <Navbar setShowLogin={setShowLogin} />
         <Hero />
         <About />
         <Experience />
@@ -1353,6 +1456,9 @@ export default function App() {
           {selectedProject && (
             <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
           )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
         </AnimatePresence>
       </div>
     </>
