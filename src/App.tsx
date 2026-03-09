@@ -130,7 +130,7 @@ const Hero = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-4xl sm:text-7xl md:text-[8rem] lg:text-[12rem] leading-[0.85] font-medium tracking-tighter text-white italic"
+          className="text-6xl sm:text-7xl md:text-[8rem] lg:text-[12rem] leading-[0.85] font-medium tracking-tighter text-white italic"
         >
           I CREATE <br/> THE <span className="text-[#ff3b3b]">VISION</span>
         </motion.h1>
