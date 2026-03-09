@@ -159,7 +159,7 @@ export const EXPERIENCE = [
     id: 3,
     period: "2021 - 2025",
     role: "BFA in Animation, Amity University",
-    description: "Bachelor of Fine Arts degree with specialization in Animation. CGPA: 7.05.",
+    description: "Bachelor of Fine Arts degree with specialization in Animation (B.F.A Animation).",
     type: "education"
   },
   {
