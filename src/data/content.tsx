@@ -168,7 +168,7 @@ export const EXPERIENCE = [
     role: "Software & Tools",
     description: "",
     type: "skills",
-    skills: ["Blender", "3ds Max", "Unreal Engine", "D5 Pro", "Chaos Vray", "Sketchup", "AutoCAD", "Adobe Creative Suite"]
+    skills: ["Blender", "3ds Max", "Unreal Engine", "D5 Pro", "Chaos Vray", "Sketchup", "AutoCAD", "Adobe Creative Suite", "Google AI Studio", "UI-UX Design", "Vercel & Netlify"]
   }
 ];
 
