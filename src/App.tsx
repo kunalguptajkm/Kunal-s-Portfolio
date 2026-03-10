@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+                                                            import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { Camera, Video, MonitorPlay, X, Menu, ChevronDown, Instagram, Linkedin, Youtube, Star, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
+import { Camera, Video, MonitorPlay, X, Menu, ChevronDown, Instagram, Linkedin, Youtube, Star, ChevronLeft, ChevronRight, Lock, ArrowLeft } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { PORTFOLIO_PROJECTS, EXPERIENCE, SERVICES } from './data/content';
 
@@ -35,7 +35,7 @@ const BehanceIcon = ({ className }: { className?: string }) => (
 
 const projects = PORTFOLIO_PROJECTS;
 
-const Navbar = ({ setShowLogin }: { setShowLogin: (show: boolean) => void }) => {
+const Navbar = ({ setShowLogin, setShow404 }: { setShowLogin: (show: boolean) => void, setShow404: (show: boolean) => void }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -69,6 +69,15 @@ const Navbar = ({ setShowLogin }: { setShowLogin: (show: boolean) => void }) => 
               {link.name}
             </a>
           ))}
+          
+          {/* The Pricing Trigger (Leads to Monster Page) */}
+          <button 
+            onClick={() => setShow404(true)} 
+            className="text-sm uppercase tracking-widest text-neutral-300 hover:text-white transition-colors cursor-pointer"
+          >
+            Pricing
+          </button>
+
           {/* The Secret Login Trigger */}
           <div className="w-px h-4 bg-white/20 ml-2"></div>
           <button 
@@ -104,6 +113,15 @@ const Navbar = ({ setShowLogin }: { setShowLogin: (show: boolean) => void }) => 
                 {link.name}
               </a>
             ))}
+             <button 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setShow404(true);
+                }} 
+                className="text-sm text-left uppercase tracking-widest text-neutral-300 hover:text-white transition-colors block"
+              >
+                Pricing
+              </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1338,9 +1356,143 @@ const LoginModal = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
+const Custom404 = ({ onBackHome, onLoginClick }: { onBackHome: () => void, onLoginClick: () => void }) => {
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }} // Slowed the master fade slightly for a more cinematic open
+      className="fixed inset-0 z-[300] w-full h-full bg-gradient-to-b from-[#91c5eb] to-[#e8f3fc] flex flex-col overflow-hidden font-sans selection:bg-black/10"
+    >
+      {/* Top Navbar (Fixed Overlay - Excluded from the camera zoom) */}
+      <div className="w-full px-6 md:px-12 py-6 flex justify-between items-center absolute top-0 left-0 z-50">
+        <div className="text-xl font-bold tracking-widest uppercase text-black">
+          Kunal<span className="text-[#ff3b3b]">Gupta</span>
+        </div>
+        <button 
+          onClick={onLoginClick}
+          className="bg-white text-black px-6 py-2.5 rounded-full text-sm font-medium tracking-wide shadow-sm hover:shadow-md transition-all active:scale-95"
+        >
+          Log in
+        </button>
+      </div>
+
+      {/* Main Content Wrapper (THE CAMERA ZOOM) */}
+      {/* Starting at scale 1.15 and easing out creates the physical pull-back effect */}
+      <motion.div 
+        initial={{ scale: 1.15 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }} 
+        className="relative flex-1 w-full flex flex-col items-center justify-center"
+      >
+        
+        {/* 1 & 2. The Dropping 404 Text */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[70%] text-[65vw] md:text-[45vw] font-black leading-none tracking-tighter select-none z-0 pointer-events-none text-[#E4EDF8] drop-shadow-[0_0_40px_rgba(255,255,255,0.6)] whitespace-nowrap">
+          {/* Dropping 1 by 1 using inline-block so standard typography tracking still applies */}
+          <motion.span 
+            initial={{ y: -150, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.8, type: "spring", bounce: 0.4 }}
+            className="inline-block"
+          >
+            4
+          </motion.span>
+          <motion.span 
+            initial={{ y: -150, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8, type: "spring", bounce: 0.4 }}
+            className="inline-block"
+          >
+            0
+          </motion.span>
+          <motion.span 
+            initial={{ y: -150, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8, type: "spring", bounce: 0.4 }}
+            className="inline-block"
+          >
+            4
+          </motion.span>
+        </div>
+
+        {/* 4. The 30% Opacity Cloud Marquee */}
+        <div className="absolute bottom-[10vh] left-0 w-full h-[60vh] z-10 pointer-events-none overflow-hidden opacity-50">
+          <motion.div 
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+            className="flex w-[200%] h-full"
+          >
+            <img src="/clouds.png" alt="Clouds" className="w-[50%] h-full object-cover object-center" />
+            <img src="/clouds.png" alt="Clouds" className="w-[50%] h-full object-cover object-center" />
+          </motion.div>
+        </div>
+
+        {/* 3. The Massive Monster & Glued Shadow */}
+        <div className="relative z-20 flex flex-col items-center w-[90vw] md:w-[600px] lg:w-[1300px] mt-[8vh]">
+          
+          <motion.video 
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.9, type: "spring", damping: 20 }}
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            src="/404-monster.webm" 
+            className="w-full h-auto relative z-20" 
+          />
+          
+          {/* The Elliptical Shadow */}
+          <motion.div 
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }} 
+            transition={{ delay: 0.6, duration: 1 }}
+            className="absolute bottom-[12%] md:bottom-[18%] left-1/2 -translate-x-1/2 w-[50%] md:w-[45%] h-[15px] md:h-[25px] bg-[#4278a1]/60 rounded-[100%] blur-[10px] z-10 pointer-events-none"
+          />
+        </div>
+
+        {/* Layer 4: Text and Bottom Button */}
+        <div className="relative z-30 flex flex-col items-center space-y-2 text-center px-4 -mt-4 md:-mt-30">
+          <motion.h1 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
+            className="text-3xl md:text-5xl font-semibold text-neutral-900 tracking-tight"
+          >
+            Oops, I think we're lost...
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.6, ease: "easeOut" }}
+            className="text-neutral-600 text-sm md:text-base font-medium mb-4"
+          >
+            Let's get you back to somewhere familiar.
+          </motion.p>
+          
+          <motion.button 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.7, duration: 0.6, ease: "easeOut" }}
+            onClick={onBackHome}
+            className="mt-4 flex items-center gap-2 bg-white text-black px-6 py-3.5 rounded-full text-sm font-medium border border-neutral-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all group active:scale-95"
+          >
+            <ArrowLeft className="w-4 h-4 text-neutral-500 group-hover:-translate-x-1 transition-transform" />
+            Back to home
+          </motion.button>
+        </div>
+
+      </motion.div>
+    </motion.div>
+  );
+};
+
 export default function App() {
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [show404, setShow404] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [titleIndex, setTitleIndex] = useState(0);
   const titles = ["ARCHITECTURAL VISUALIZER", "3D ARTIST"];
@@ -1440,7 +1592,7 @@ export default function App() {
       </AnimatePresence>
 
       <div className="min-h-screen bg-neutral-950 text-white font-sans selection:bg-white selection:text-black">
-        <Navbar setShowLogin={setShowLogin} />
+        <Navbar setShowLogin={setShowLogin} setShow404={setShow404} />
         <Hero />
         <About />
         <Experience />
@@ -1459,6 +1611,17 @@ export default function App() {
         </AnimatePresence>
         <AnimatePresence>
           {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+        </AnimatePresence>
+        <AnimatePresence>
+          {show404 && (
+            <Custom404 
+              onBackHome={() => setShow404(false)} 
+              onLoginClick={() => {
+                setShow404(false);
+                setShowLogin(true);
+              }} 
+            />
+          )}
         </AnimatePresence>
       </div>
     </>
